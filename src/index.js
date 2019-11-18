@@ -53,7 +53,7 @@ function mapApiGatewayEventToHttpRequest (event, context, socketPath) {
   headers['x-apigateway-event'] = encodeURIComponent(JSON.stringify(clonedEventWithoutBody))
   headers['x-apigateway-context'] = encodeURIComponent(JSON.stringify(context))
 
-  return {
+  const tmp = {
     method: event.httpMethod,
     path: getPathWithQueryStringParams(event),
     headers,
@@ -63,6 +63,12 @@ function mapApiGatewayEventToHttpRequest (event, context, socketPath) {
     // hostname: headers.Host, // Alias for host
     // port: headers['X-Forwarded-Port']
   }
+
+  if (event.multiValueQueryStringParameters) {
+    tmp.multipleQueries = event.multiValueQueryStringParameters
+  }
+
+  return tmp
 }
 
 function forwardResponseToApiGateway (server, response, resolver) {
